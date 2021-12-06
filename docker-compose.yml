@@ -27,19 +27,19 @@ services:
   redis:
     image : redis
     
-  telegram:
-    build: telegram/
-    command: python ./telegram.py
-    env_file:
-      - D:/Diana/Advanced_Python/.env
-    restart: always
-    ports:
-      - 5002:5002
-    depends_on:
-      - mongodb
-      - worker
-      - redis
-      - app
+#   telegram:
+#     build: telegram/
+#     command: python ./telegram.py
+#     env_file:
+#       - D:/Diana/Advanced_Python/.env
+#     restart: always
+#     ports:
+#       - 5002:5002
+#     depends_on:
+#       - mongodb
+#       - worker
+#       - redis
+#       - app
       
   mongodb:
     image : mongo
