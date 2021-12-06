@@ -4,11 +4,81 @@ import os
 from mlmodels import MLModelsDAO, Objective, users
 import pandas as pd
 import json
+from pymongo import MongoClient
+
 models_dao = MLModelsDAO()
 
 CELERY_BROKER = os.environ['CELERY_BROKER']
 CELERY_BACKEND = os.environ['CELERY_BACKEND']
 celery = Celery('tasks', broker=CELERY_BROKER, backend=CELERY_BACKEND)
+
+MONGO_URL = os.environ['MONGO_URL']
+BOT_TOKEN = os.environ['BOT_TOKEN']
+
+client = MongoClient(MONGO_URL)
+db = client['testdb']
+users = db['users']
+
+class MongoDataBase:
+
+    def __init__(self, MONGO_URL):
+
+        client = MongoClient(MONGO_URL)
+        self.users = client['testdb']['users']
+        self.fields = ['id',
+                       'ml_models', 'counter',
+                       'num',
+                       'train', 'y_train',
+                       'test', 'y_test',
+                       'config', 'find_params',
+                       'cv', 'n_trials',
+                       'pass_model', 'step',
+                       'number', 'to_do']
+
+        self.default_params = {'ml_models': [],
+                               'counter': 0,
+                               'params': {'num': 0,
+                                          'train': None, 'y_train': None,
+                                          'test': None, 'y_test': None,
+                                          'config': str({}),
+                                          'params': str({}),
+                                          'find_params': None,
+                                          'cv': 3,
+                                          'n_trials': 20,
+                                          'name': 'logreg',
+                                          'step': '',
+                                          'number': 0,
+                                          'to_do': ''
+                                          }
+                               }
+
+    def check_client(self, user_id):
+        res = users.find_one({'id': user_id})
+        if res is not None:
+            return True
+        else:
+            self.add_client(user_id)
+            return True
+
+    def add_client(self, user_id):
+        user_data = {'id': user_id}
+        user_data.update(self.default_params)
+        users.insert_one(user_data)
+        return True
+
+    def update_client(self, user_id, datas):
+        users.update_one({'id': user_id}, {'$set': datas})
+
+    def get_client(self, user_id):
+        return users.find_one({'id': user_id})
+    
+mong = MongoDataBase(MONGO_URL)
+
+@celery.task(name='check_user')    
+def get_params(user_id):
+    print(user_id)
+    mong.check_client(user_id)
+    return str(True)
 
 @celery.task(name='get_params')    
 def get_params(user_id, param):
