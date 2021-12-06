@@ -583,9 +583,9 @@ telegram_bot = TelegramBot()
 
 @bot.message_handler(content_types=['text', 'document'])
 def start(message):
-    bot.send_message(message.from_user.id, 
-                         "Привет, я ML бот! Я умею обучать ML модели. Введите /start, поучим модели!")
     if message.text == '/start':
+        bot.send_message(message.from_user.id, 
+                         "Привет, я ML бот! Я умею обучать ML модели. Введите что-нибудь, поучим модели!")
         mong.check_client(message.from_user.id)
         params = telegram_bot.get_params(message.from_user.id)
         params['num'] = 0
