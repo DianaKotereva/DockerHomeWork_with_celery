@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+
+  app:
+    build: app/
+    command: python ./cli.py
+    env_file:
+      - D:/Diana/Advanced_Python/.env
+    ports:
+      - 5000:5000
+    restart: always
+    depends_on:
+      - mongodb
+      - redis
+      - worker
+      
+  worker:
+    build: worker/
+    command: python ./tasks.py
+    env_file:
+      - D:/Diana/Advanced_Python/.env
+    depends_on:
+      - mongodb
+      - redis
+      
+  redis:
+    image : redis
+    
+  telegram:
+    build: telegram/
+    command: python ./telegram.py
+    env_file:
+      - D:/Diana/Advanced_Python/.env
+    restart: always
+    ports:
+      - 5002:5002
+    depends_on:
+      - mongodb
+      - worker
+      - redis
+      - app
+      
+  mongodb:
+    image : mongo
+    container_name: mongodb
+    command: mongod --auth --port 27117
+    environment:
+    - PUID=1000
+    - PGID=1000
+    ports:
+    - 27017:27017
+    restart: unless-stopped
+    
+volumes:
+  flask_project:
