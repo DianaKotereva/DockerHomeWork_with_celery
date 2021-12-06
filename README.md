@@ -22,4 +22,6 @@ docker-compose up
 Образы в docker-hub:
 
 https://hub.docker.com/repository/docker/1306613066/telegram_image
+https://hub.docker.com/repository/docker/1306613066/worker_image
+https://hub.docker.com/repository/docker/1306613066/app_image
 
