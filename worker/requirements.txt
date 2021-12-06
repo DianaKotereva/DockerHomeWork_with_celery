@@ -43,7 +43,6 @@ scikit-learn==1.0.1
 scipy==1.6.1
 six==1.16.0
 sklearn==0.0
-SQLAlchemy==1.4.26
 stevedore==3.5.0
 threadpoolctl==3.0.0
 tqdm==4.62.3

@@ -181,9 +181,6 @@ class MLModelsDAO:
         
     def get_params(self, user_id, param):
         MONGO_URL = os.environ['MONGO_URL']
-        client = MongoClient(MONGO_URL)
-        db = client['testdb']
-        users = db['users']
         res = users.find_one({'id': user_id})
         if res is not None:
             return res[param]
@@ -192,9 +189,6 @@ class MLModelsDAO:
         
     def update_params(self, user_id, params):
         MONGO_URL = os.environ['MONGO_URL']
-        client = MongoClient(MONGO_URL)
-        db = client['testdb']
-        users = db['users']
         users.update_one({'id': user_id}, {'$set': {**params}})
         
         
