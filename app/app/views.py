@@ -25,13 +25,23 @@ def receive_result(task_id):
 def try_first_connection():
     print('connect')
     try:
-        task = celery.send_task('get_params', args = [0, 'count'])
+        task = celery.send_task('get_params', args = [0, 'counter'])
         res = receive_result(task.id)
         return True
     except Exception as e:
         return True
     
 check = try_first_connection()
+
+@api.route('/api/check_user')
+class MLModels(Resource):
+
+    def get(self):
+        user_id = eval(request.form.get('user_id'))
+        log.info('Check user')
+        task = celery.send_task('check_user', args = [user_id])
+        res = receive_result(task.id)
+        return str(res)
 
 @api.route('/api/ml_models')
 class MLModels(Resource):
